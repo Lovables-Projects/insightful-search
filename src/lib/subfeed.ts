@@ -36,7 +36,7 @@ export async function search(query: string): Promise<SearchResponse> {
     results: (data.results || []).map((r: any) => ({
       title: r.title || 'Untitled',
       url: r.url || r.link || '',
-      snippet: r.snippet || r.description || '',
+      snippet: r.snippet || r.description || r.content || '',
       domain: extractDomain(r.url || r.link || ''),
       favicon: getFaviconUrl(r.url || r.link || ''),
     })),
@@ -66,7 +66,7 @@ export async function followUp(message: string): Promise<SearchResponse> {
     results: (data.results || []).map((r: any) => ({
       title: r.title || 'Untitled',
       url: r.url || r.link || '',
-      snippet: r.snippet || r.description || '',
+      snippet: r.snippet || r.description || r.content || '',
       domain: extractDomain(r.url || r.link || ''),
       favicon: getFaviconUrl(r.url || r.link || ''),
     })),
