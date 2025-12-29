@@ -44,13 +44,15 @@ export async function search(query: string): Promise<SearchResponse> {
   };
 }
 
-export async function followUp(message: string): Promise<SearchResponse> {
-  if (!currentSessionId) {
+export async function followUp(message: string, sessionId?: string): Promise<SearchResponse> {
+  const activeSessionId = sessionId || currentSessionId;
+  
+  if (!activeSessionId) {
     throw new Error('No active search session. Please perform a search first.');
   }
 
   const { data, error } = await supabase.functions.invoke('subfeed-followup', {
-    body: { message, session_id: currentSessionId }
+    body: { message, session_id: activeSessionId }
   });
 
   if (error) {
@@ -61,6 +63,8 @@ export async function followUp(message: string): Promise<SearchResponse> {
     throw new Error(data.error);
   }
 
+  currentSessionId = data.session_id || activeSessionId;
+
   return {
     answer: data.answer || '',
     results: (data.results || []).map((r: any) => ({
@@ -70,7 +74,7 @@ export async function followUp(message: string): Promise<SearchResponse> {
       domain: extractDomain(r.url || r.link || ''),
       favicon: getFaviconUrl(r.url || r.link || ''),
     })),
-    session_id: data.session_id || currentSessionId,
+    session_id: data.session_id || activeSessionId,
   };
 }
 

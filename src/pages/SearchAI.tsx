@@ -67,7 +67,7 @@ export default function SearchAI() {
     setFollowUpLoading(true);
     
     try {
-      const result = await followUp(message);
+      const result = await followUp(message, searchResult?.session_id);
       setSearchResult(result);
     } catch (error) {
       console.error('Follow-up error:', error);
